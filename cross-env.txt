@@ -1,0 +1,1 @@
+// cross-env is a dev dependency to allow environment variables in scripts on all platforms
