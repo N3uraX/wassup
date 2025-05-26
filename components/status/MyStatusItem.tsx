@@ -5,6 +5,7 @@ import Avatar from '@/components/common/Avatar';
 import { Plus } from 'lucide-react-native';
 import { User } from '@/types';
 import colors from '@/constants/colors';
+import { useThemeStore } from '@/store/useThemeStore';
 
 interface MyStatusItemProps {
   user: User;
@@ -18,6 +19,7 @@ export default function MyStatusItem({
   onAddStatus 
 }: MyStatusItemProps) {
   const router = useRouter();
+  const { theme } = useThemeStore();
   
   const handlePress = () => {
     if (hasStatus) {
@@ -29,7 +31,7 @@ export default function MyStatusItem({
   
   return (
     <TouchableOpacity 
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme === 'dark' ? '#000' : colors.background }]}
       onPress={handlePress}
       activeOpacity={0.7}
     >
@@ -40,7 +42,7 @@ export default function MyStatusItem({
           name={user.name}
           showPlaceholder={!user.avatar}
         />
-        <View style={styles.addButtonContainer}>
+        <View style={[styles.addButtonContainer, { backgroundColor: theme === 'dark' ? '#000' : colors.background }]}> 
           <View style={styles.addButton}>
             <Plus size={16} color={colors.textOnPrimary} />
           </View>
@@ -63,7 +65,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     padding: 16,
-    backgroundColor: colors.background,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.divider,
   },
@@ -74,7 +75,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: -4,
     right: -4,
-    backgroundColor: colors.background,
     borderRadius: 1000,
     padding: 2,
   },

@@ -30,9 +30,9 @@ export default function ChatScreen() {
     };
   }, [id, setActiveChat]);
   
-  const handleSendMessage = (text: string) => {
+  const handleSendMessage = (text: string, media?: string | null) => {
     if (id) {
-      sendMessage(id, text);
+      sendMessage(id, text, media);
       
       // Scroll to bottom after sending message
       setTimeout(() => {

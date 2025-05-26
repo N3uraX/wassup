@@ -4,6 +4,7 @@ import { formatMessageTime } from '@/utils/date';
 import MessageStatus from '@/components/common/MessageStatus';
 import { Message } from '@/types';
 import colors from '@/constants/colors';
+import { useThemeStore } from '@/store/useThemeStore';
 
 interface ChatBubbleProps {
   message: Message;
@@ -11,33 +12,25 @@ interface ChatBubbleProps {
 
 export default function ChatBubble({ message }: ChatBubbleProps) {
   const { isMe, text, timestamp, status, media } = message;
-  
+
   const formattedTime = formatMessageTime(timestamp);
-  
+  const { theme } = useThemeStore();
+
   return (
-    <View style={[
-      styles.container,
-      isMe ? styles.myMessage : styles.theirMessage
-    ]}>
+    <View style={[styles.bubbleRow, isMe ? styles.bubbleRowMe : styles.bubbleRowOther]}>
       <View style={[
         styles.bubble,
-        isMe ? styles.myBubble : styles.theirBubble
+        isMe
+          ? { backgroundColor: theme === 'dark' ? colors.darkBubbleOut : '#dcf8c6', borderTopRightRadius: 0 }
+          : { backgroundColor: theme === 'dark' ? colors.darkBubbleIn : '#fff', borderTopLeftRadius: 0, borderWidth: 1, borderColor: '#ececec' },
       ]}>
-        {media && media.length > 0 && media[0].type === 'image' && (
-          <Image 
-            source={{ uri: media[0].url }} 
-            style={styles.mediaImage} 
-            resizeMode="cover"
-          />
+        {media && media.length > 0 && (
+          <Image source={{ uri: media[0].url }} style={styles.image} />
         )}
-        
         <Text style={styles.text}>{text}</Text>
-        
-        <View style={styles.timeContainer}>
+        <View style={styles.metaRow}>
           <Text style={styles.time}>{formattedTime}</Text>
-          {isMe && (
-            <MessageStatus status={status} size={14} />
-          )}
+          {isMe && <MessageStatus status={status} size={14} />}
         </View>
       </View>
     </View>
@@ -45,53 +38,43 @@ export default function ChatBubble({ message }: ChatBubbleProps) {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  bubbleRow: {
+    flexDirection: 'row',
     marginVertical: 2,
-    marginHorizontal: 8,
-    maxWidth: '80%',
-    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
   },
-  myMessage: {
-    alignSelf: 'flex-end',
+  bubbleRowMe: {
+    justifyContent: 'flex-end',
   },
-  theirMessage: {
-    alignSelf: 'flex-start',
+  bubbleRowOther: {
+    justifyContent: 'flex-start',
   },
   bubble: {
-    borderRadius: 8,
-    paddingHorizontal: 12,
+    maxWidth: '80%',
+    borderRadius: 18,
     paddingVertical: 8,
-    paddingBottom: 18, // Space for time
-  },
-  myBubble: {
-    backgroundColor: colors.messageBubbleOut,
-    borderTopRightRadius: 2,
-  },
-  theirBubble: {
-    backgroundColor: colors.messageBubbleIn,
-    borderTopLeftRadius: 2,
+    paddingHorizontal: 12,
+    marginVertical: 2,
   },
   text: {
     fontSize: 16,
-    color: colors.textPrimary,
-    marginBottom: 4,
+    color: '#222',
   },
-  timeContainer: {
-    position: 'absolute',
-    bottom: 4,
-    right: 8,
+  metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    alignSelf: 'flex-end',
+    marginTop: 4,
   },
   time: {
     fontSize: 11,
-    color: colors.textTertiary,
+    color: '#888',
     marginRight: 4,
   },
-  mediaImage: {
-    width: '100%',
-    height: 200,
-    borderRadius: 6,
-    marginBottom: 8,
+  image: {
+    width: 180,
+    height: 180,
+    borderRadius: 10,
+    marginBottom: 6,
   },
 });

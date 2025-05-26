@@ -5,6 +5,7 @@ import Avatar from '@/components/common/Avatar';
 import { CallHistory } from '@/types';
 import { formatChatListTime } from '@/utils/date';
 import colors from '@/constants/colors';
+import { useThemeStore } from '@/store/useThemeStore';
 
 interface CallItemProps {
   call: CallHistory;
@@ -13,6 +14,7 @@ interface CallItemProps {
 
 export default function CallItem({ call, onPress }: CallItemProps) {
   const { user, timestamp, type, status, duration } = call;
+  const { theme } = useThemeStore();
   
   const getCallIcon = () => {
     if (status === 'missed') {
@@ -36,7 +38,7 @@ export default function CallItem({ call, onPress }: CallItemProps) {
   
   return (
     <TouchableOpacity 
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme === 'dark' ? '#000' : colors.background }]}
       onPress={onPress}
       activeOpacity={0.7}
     >
@@ -89,7 +91,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     padding: 16,
-    backgroundColor: colors.background,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.divider,
   },

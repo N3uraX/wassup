@@ -30,6 +30,8 @@ export interface Chat {
   lastMessage?: Message;
   name?: string; // for group chats
   avatar?: string; // for group chats
+  isFavorite?: boolean;
+  isArchived?: boolean;
 }
 
 export interface CallHistory {

@@ -5,33 +5,27 @@ import {
   StyleSheet, 
   TouchableOpacity,
   Platform,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
 } from 'react-native';
 import { 
-  Camera, 
-  Mic, 
-  Paperclip, 
-  Send, 
-  Smile
+  Send
 } from 'lucide-react-native';
 import colors from '@/constants/colors';
 
 interface ChatInputProps {
-  onSend: (message: string) => void;
+  onSend: (message: string, media?: string | null) => void;
 }
 
 export default function ChatInput({ onSend }: ChatInputProps) {
   const [message, setMessage] = useState('');
-  
+
   const handleSend = () => {
     if (message.trim()) {
       onSend(message.trim());
       setMessage('');
     }
   };
-  
-  const showSendButton = message.trim().length > 0;
-  
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -39,41 +33,19 @@ export default function ChatInput({ onSend }: ChatInputProps) {
       style={styles.keyboardAvoidingView}
     >
       <View style={styles.container}>
-        <View style={styles.inputContainer}>
-          <TouchableOpacity style={styles.iconButton}>
-            <Smile size={24} color={colors.icon} />
-          </TouchableOpacity>
-          
-          <TextInput
-            style={styles.input}
-            value={message}
-            onChangeText={setMessage}
-            placeholder="Message"
-            placeholderTextColor={colors.textTertiary}
-            multiline
-          />
-          
-          <TouchableOpacity style={styles.iconButton}>
-            <Paperclip size={24} color={colors.icon} />
-          </TouchableOpacity>
-          
-          {!showSendButton && (
-            <TouchableOpacity style={styles.iconButton}>
-              <Camera size={24} color={colors.icon} />
-            </TouchableOpacity>
-          )}
-        </View>
-        
-        <TouchableOpacity 
+        <TextInput
+          style={styles.input}
+          value={message}
+          onChangeText={setMessage}
+          placeholder="Type a message"
+          multiline
+        />
+        <TouchableOpacity
           style={styles.sendButton}
           onPress={handleSend}
-          disabled={!showSendButton}
+          disabled={!message.trim()}
         >
-          {showSendButton ? (
-            <Send size={20} color={colors.textOnPrimary} />
-          ) : (
-            <Mic size={24} color={colors.textOnPrimary} />
-          )}
+          <Send size={24} color={message.trim() ? colors.primary : colors.icon} />
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -90,23 +62,18 @@ const styles = StyleSheet.create({
     padding: 8,
     backgroundColor: colors.background,
   },
-  inputContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.background,
-    borderRadius: 20,
-    paddingHorizontal: 8,
-    marginRight: 8,
-  },
-  iconButton: {
-    padding: 8,
-  },
   input: {
     flex: 1,
+    minHeight: 40,
+    maxHeight: 120,
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: colors.background, // Use background instead of inputBackground
     fontSize: 16,
-    maxHeight: 100,
-    color: colors.textPrimary,
+    marginRight: 8,
+    borderWidth: 1,
+    borderColor: colors.divider,
   },
   sendButton: {
     width: 40,

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { Chat, Message } from '@/types';
-import { populatedMockChats } from '@/assets/data/mockData';
+import { populatedMockChats, mockUsers } from '@/assets/data/mockData';
 
 interface ChatState {
   chats: Chat[];
@@ -10,8 +10,13 @@ interface ChatState {
   
   fetchChats: () => Promise<void>;
   setActiveChat: (chatId: string) => void;
-  sendMessage: (chatId: string, text: string) => void;
+  sendMessage: (chatId: string, text: string, media?: string | null) => void;
   markAsRead: (chatId: string) => void;
+  addChat: (userIds: string[], isGroup?: boolean, groupName?: string) => void;
+  archiveChat: (chatId: string) => void;
+  deleteChat: (chatId: string) => void;
+  toggleRead: (chatId: string) => void;
+  unarchiveChat: (chatId: string) => void;
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -50,7 +55,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
   },
   
-  sendMessage: (chatId: string, text: string) => {
+  sendMessage: (chatId: string, text: string, media?: string | null) => {
     const timestamp = new Date().toISOString();
     const newMessage: Message = {
       id: `msg-${Date.now()}`,
@@ -58,7 +63,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
       timestamp,
       sender: 'me',
       status: 'sent',
-      isMe: true
+      isMe: true,
+      media: media ? [{ type: 'image', url: media }] : undefined,
     };
     
     set(state => ({
@@ -161,5 +167,63 @@ export const useChatStore = create<ChatState>((set, get) => ({
         return chat;
       })
     }));
-  }
+  },
+  
+  addChat: (userIds: string[], isGroup = false, groupName?: string) => {
+    set(state => {
+      // Check if chat already exists (for individual chats)
+      if (!isGroup && userIds.length === 1) {
+        const existing = state.chats.find(
+          c => c.type === 'individual' && c.participants[0]?.id === userIds[0]
+        );
+        if (existing) return { ...state, activeChat: existing };
+      }
+      // Create new chat
+      const participants = mockUsers.filter(u => userIds.includes(u.id));
+      const newChat: Chat = {
+        id: Date.now().toString(),
+        type: isGroup ? 'group' : 'individual',
+        participants,
+        messages: [],
+        unreadCount: 0,
+        name: isGroup ? groupName : undefined,
+        avatar: isGroup ? undefined : undefined,
+        isFavorite: false,
+        isArchived: false,
+      };
+      return {
+        ...state,
+        chats: [...state.chats, newChat],
+        activeChat: newChat,
+      };
+    });
+  },
+  archiveChat: (chatId: string) => {
+    set(state => ({
+      chats: state.chats.map(chat =>
+        chat.id === chatId ? { ...chat, isArchived: true } : chat
+      ),
+    }));
+  },
+  deleteChat: (chatId: string) => {
+    set(state => ({
+      chats: state.chats.filter(chat => chat.id !== chatId),
+    }));
+  },
+  toggleRead: (chatId: string) => {
+    set(state => ({
+      chats: state.chats.map(chat =>
+        chat.id === chatId
+          ? { ...chat, unreadCount: chat.unreadCount > 0 ? 0 : 1 }
+          : chat
+      ),
+    }));
+  },
+  unarchiveChat: (chatId: string) => {
+    set(state => ({
+      chats: state.chats.map(chat =>
+        chat.id === chatId ? { ...chat, isArchived: false } : chat
+      ),
+    }));
+  },
 }));

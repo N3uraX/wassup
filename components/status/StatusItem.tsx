@@ -5,6 +5,7 @@ import Avatar from '@/components/common/Avatar';
 import { StatusUpdate } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
 import colors from '@/constants/colors';
+import { useThemeStore } from '@/store/useThemeStore';
 
 interface StatusItemProps {
   status: StatusUpdate;
@@ -21,9 +22,11 @@ export default function StatusItem({ status, isViewed = false }: StatusItemProps
     router.push(`/status/${id}`);
   };
   
+  const { theme } = useThemeStore();
+
   return (
     <TouchableOpacity 
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme === 'dark' ? '#000' : colors.background }]}
       onPress={handlePress}
       activeOpacity={0.7}
     >
@@ -58,7 +61,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     padding: 16,
-    backgroundColor: colors.background,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.divider,
   },

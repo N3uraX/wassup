@@ -8,13 +8,15 @@ interface SearchBarProps {
   onChangeText: (text: string) => void;
   placeholder?: string;
   onClear?: () => void;
+  theme?: 'light' | 'dark';
 }
 
 export default function SearchBar({
   value,
   onChangeText,
   placeholder = 'Search',
-  onClear
+  onClear,
+  theme = 'light',
 }: SearchBarProps) {
   const handleClear = () => {
     onChangeText('');
@@ -22,19 +24,19 @@ export default function SearchBar({
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <Search size={20} color={colors.textSecondary} />
+    <View style={[styles.container, { backgroundColor: theme === 'dark' ? '#000' : colors.background }]}> 
+      <View style={[styles.searchContainer, { backgroundColor: theme === 'dark' ? '#181a1b' : colors.backgroundDark }]}> 
+        <Search size={20} color={theme === 'dark' ? '#aaa' : colors.textSecondary} />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { color: theme === 'dark' ? '#fff' : colors.textPrimary }]}
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
-          placeholderTextColor={colors.textSecondary}
+          placeholderTextColor={theme === 'dark' ? '#888' : colors.textSecondary}
         />
         {value.length > 0 && (
           <TouchableOpacity onPress={handleClear} style={styles.clearButton}>
-            <X size={18} color={colors.textSecondary} />
+            <X size={18} color={theme === 'dark' ? '#aaa' : colors.textSecondary} />
           </TouchableOpacity>
         )}
       </View>
@@ -45,12 +47,10 @@ export default function SearchBar({
 const styles = StyleSheet.create({
   container: {
     padding: 8,
-    backgroundColor: colors.background,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.backgroundDark,
     borderRadius: 8,
     paddingHorizontal: 12,
     height: 40,
@@ -59,7 +59,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 8,
     fontSize: 16,
-    color: colors.textPrimary,
   },
   clearButton: {
     padding: 4,

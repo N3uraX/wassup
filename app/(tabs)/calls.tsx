@@ -6,15 +6,19 @@ import {
   TouchableOpacity, 
   Text 
 } from 'react-native';
-import { Phone as PhonePlus, MoveVertical as MoreVertical } from 'lucide-react-native';
+import { Phone as PhonePlus } from 'lucide-react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import CallItem from '@/components/calls/CallItem';
-import SearchBar from '@/components/common/SearchBar';
 import { useCallsStore } from '@/store/useCallsStore';
+import { useThemeStore } from '@/store/useThemeStore';
 import colors from '@/constants/colors';
 
 export default function CallsScreen() {
   const { calls, fetchCalls } = useCallsStore();
+  const { theme } = useThemeStore();
   const [searchQuery, setSearchQuery] = useState('');
+  const insets = useSafeAreaInsets();
   
   useEffect(() => {
     fetchCalls();
@@ -32,63 +36,53 @@ export default function CallsScreen() {
   };
   
   return (
-    <View style={styles.container}>
-      <View style={styles.headerActions}>
-        <TouchableOpacity style={styles.headerButton}>
-          <MoreVertical size={22} color={colors.textOnPrimary} />
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme === 'dark' ? '#000' : colors.background }} edges={['top', 'left', 'right']}>
+      <View style={[styles.headerRow, { paddingTop: insets.top + 8, backgroundColor: theme === 'dark' ? '#000' : colors.background }]}> 
+        <Text style={[styles.headerTitle, { color: theme === 'dark' ? '#fff' : colors.textPrimary }]}>Calls</Text>
+      </View>
+      <View style={{ flex: 1 }}>
+        {filteredCalls.length === 0 && searchQuery ? (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No calls found</Text>
+          </View>
+        ) : filteredCalls.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyTitle}>No calls yet</Text>
+            <Text style={styles.emptyText}>Start calling your contacts who have WhatsApp</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={filteredCalls}
+            keyExtractor={item => item.id}
+            renderItem={({ item }) => <CallItem call={item} />}
+            style={styles.list}
+          />
+        )}
+        <TouchableOpacity 
+          style={styles.newCallButton}
+          onPress={handleNewCall}
+        >
+          <PhonePlus size={24} color={theme === 'dark' ? '#fff' : colors.textOnPrimary} />
         </TouchableOpacity>
       </View>
-      
-      <SearchBar 
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        placeholder="Search calls"
-      />
-      
-      {filteredCalls.length === 0 && searchQuery ? (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>No calls found</Text>
-        </View>
-      ) : filteredCalls.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyTitle}>No calls yet</Text>
-          <Text style={styles.emptyText}>Start calling your contacts who have WhatsApp</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={filteredCalls}
-          keyExtractor={item => item.id}
-          renderItem={({ item }) => <CallItem call={item} />}
-          style={styles.list}
-        />
-      )}
-      
-      <TouchableOpacity 
-        style={styles.newCallButton}
-        onPress={handleNewCall}
-      >
-        <PhonePlus size={24} color={colors.textOnPrimary} />
-      </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  headerActions: {
+  headerRow: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 10,
-    backgroundColor: colors.primaryDark,
+    paddingBottom: 8,
   },
-  headerButton: {
-    marginLeft: 24,
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: colors.textPrimary,
   },
+  container: { flex: 1 },
   list: {
     flex: 1,
   },

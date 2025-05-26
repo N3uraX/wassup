@@ -10,7 +10,7 @@ const getRandomTime = (hoursAgo: number = 24) => {
 export const mockUsers: User[] = [
   {
     id: '1',
-    name: 'Alice Johnson',
+    name: 'Kelly',
     avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=256',
     status: 'Hey there! I am using WhatsApp',
     lastSeen: getRandomTime(1),
@@ -19,7 +19,7 @@ export const mockUsers: User[] = [
   },
   {
     id: '2',
-    name: 'Bob Smith',
+    name: 'Mutabala',
     avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=256',
     status: 'At work',
     lastSeen: getRandomTime(3),
@@ -28,7 +28,7 @@ export const mockUsers: User[] = [
   },
   {
     id: '3',
-    name: 'Carlos Rodriguez',
+    name: 'Alpha Legrand',
     avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=256',
     status: 'Busy',
     lastSeen: getRandomTime(12),
@@ -64,7 +64,7 @@ export const mockUsers: User[] = [
   },
   {
     id: '7',
-    name: 'Work Group',
+    name: 'NetLabsUG',
     avatar: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=256',
     status: 'Group for work discussions',
     lastSeen: getRandomTime(1),
@@ -134,6 +134,8 @@ export const mockChats: Chat[] = [
     participants: [mockUsers[0]],
     messages: generateMessages('1', 15),
     unreadCount: 2,
+    isFavorite: true,
+    isArchived: false,
   },
   {
     id: '2',
@@ -141,6 +143,8 @@ export const mockChats: Chat[] = [
     participants: [mockUsers[1]],
     messages: generateMessages('2', 8),
     unreadCount: 0,
+    isFavorite: false,
+    isArchived: false,
   },
   {
     id: '3',
@@ -148,6 +152,8 @@ export const mockChats: Chat[] = [
     participants: [mockUsers[2]],
     messages: generateMessages('3', 12),
     unreadCount: 5,
+    isFavorite: false,
+    isArchived: true,
   },
   {
     id: '4',
@@ -155,6 +161,8 @@ export const mockChats: Chat[] = [
     participants: [mockUsers[3]],
     messages: generateMessages('4', 20),
     unreadCount: 0,
+    isFavorite: true,
+    isArchived: false,
   },
   {
     id: '5',
@@ -162,15 +170,19 @@ export const mockChats: Chat[] = [
     participants: [mockUsers[4]],
     messages: generateMessages('5', 5),
     unreadCount: 1,
+    isFavorite: false,
+    isArchived: false,
   },
   {
     id: '6',
     type: 'group',
-    name: 'Work Group',
+    name: 'NetLabsUG',
     avatar: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=256',
     participants: [mockUsers[0], mockUsers[1], mockUsers[2], mockUsers[3]],
     messages: generateMessages('6', 25),
     unreadCount: 10,
+    isFavorite: false,
+    isArchived: false,
   },
   {
     id: '7',
@@ -180,6 +192,8 @@ export const mockChats: Chat[] = [
     participants: [mockUsers[0], mockUsers[4], mockUsers[5]],
     messages: generateMessages('7', 18),
     unreadCount: 3,
+    isFavorite: true,
+    isArchived: false,
   }
 ];
 
